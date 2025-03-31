@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Main guidelines
+
+- I am a beginner learning GO. I prefer to get hints to build things rather than solutions.
+- I would like to learn the important aspects of the language and how to structure a real project.
+- Clean code and clean architecture are very important for my coding philosophy.
