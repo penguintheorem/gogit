@@ -5,5 +5,6 @@ func PrintHelp() string {
 	
 	Commands:
 		help, --help show this help menu
+		init, --init initialize a new git repository in the current directory
 	`
 }
