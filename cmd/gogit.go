@@ -20,6 +20,8 @@ func main() {
 		fmt.Println(cli.PrintHelp())
 	case "init", "--init":
 		cli.Init()
+	case "add", "--add":
+		cli.Add(os.Args[2])
 	default:
 		fmt.Printf("Unknown command: %s\n", os.Args[1])
 		fmt.Println(cli.PrintHelp())

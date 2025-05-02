@@ -5,11 +5,12 @@ import (
 	"os"
 )
 
-func Init() {
+func Init() (isCreated bool) {
 	// check if .git directory exists
-	if _, err := os.Stat(".git"); os.IsExist(err) {
+	_, err := os.Stat(".git")
+	if err == nil {
 		fmt.Println("Error: .git directory already exists")
-		return
+		return false
 	}
 
 	os.Mkdir(".git", 0755)
@@ -35,4 +36,6 @@ func Init() {
 	// config
 	configText := []byte("[core]\n\trepositoryformatversion = 0\n\tfilemode = true\n\tbare = false\n\tlogallrefupdates = true\n\tignorecase = true\n\tprecomposeunicode = true")
 	os.WriteFile(".git/config", configText, 0755)
+
+	return true
 }

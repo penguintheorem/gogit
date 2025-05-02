@@ -5,25 +5,72 @@ import (
 	"testing"
 )
 
-func TestInit(t *testing.T) {
+func testSetup(t *testing.T) {
+	// Mark the function as a helper
+	t.Helper()
+
 	// Create a temporary directory for testing
-	tempDir, error := os.MkdirTemp("", "gogit-test")
-	if error != nil {
-		t.Fatalf("Failed to create temporary directory: %v", error)
-	}
-	defer os.RemoveAll(tempDir)
+	testDir := t.TempDir()
 
-	// Save current directory
-	currentDir, error := os.Getwd()
-	if error != nil {
-		t.Fatalf("Failed to get current directory: %v", error)
+	// Change to the test directory
+	err := os.Chdir(testDir)
+	if err != nil {
+		t.Fatalf("Failed to change to test directory: %v", err)
 	}
+}
 
-	error = os.Chdir(tempDir)
-	if error != nil {
-		t.Fatalf("Failed to change to temporary directory: %v", error)
-	}
+func TestInit(t *testing.T) {
+	t.Run("succesful_init", func(t *testing.T) {
+		// Setup
+		testSetup(t)
 
-	// Run the Init function
-	Init()
+		// Run
+		isCreated := Init()
+
+		// Verify
+		if !isCreated {
+			t.Fatalf("Failed to create .git directory")
+		}
+
+		_, err := os.Stat(".git")
+		if os.IsNotExist(err) {
+			t.Fatalf("Failed to create .git directory")
+		}
+
+		_, err = os.Stat(".git/objects")
+		if os.IsNotExist(err) {
+			t.Fatalf("Failed to create .git/objects directory")
+		}
+
+		_, err = os.Stat(".git/refs")
+		if os.IsNotExist(err) {
+			t.Fatalf("Failed to create .git/refs directory")
+		}
+
+		_, err = os.Stat(".git/HEAD")
+		if os.IsNotExist(err) {
+			t.Fatalf("Failed to create .git/HEAD file")
+		}
+
+		_, err = os.Stat(".git/config")
+		if os.IsNotExist(err) {
+			t.Fatalf("Failed to create .git/config file")
+		}
+	})
+
+	t.Run("git_directory_already_exists", func(t *testing.T) {
+		// Setup
+		testSetup(t)
+
+		// Run
+		isCreated := Init()
+		if !isCreated {
+			t.Fatalf("Failed to create .git directory")
+		}
+
+		isCreatedTwice := Init()
+		if isCreatedTwice {
+			t.Fatalf(".git repository folder was initialized twice")
+		}
+	})
 }
