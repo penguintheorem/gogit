@@ -3,15 +3,23 @@ package git
 import (
 	"fmt"
 	"gogit/internal/util"
-	"log"
+	"os"
 )
 
-func Add(filePath string) {
-	hash, err := util.GetObjectHash(filePath)
+func Add(filePath string) (string, error) {
+	content, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Printf("Failed to get object hash: %v", err)
-		return
+		return "", fmt.Errorf("failed to open file: %w", err)
 	}
 
-	fmt.Printf("Here is your hash: %s", hash)
+	header := util.BuildHeader(content)
+	combined := header + string(content)
+	hash := util.GetObjectHash(combined)
+
+	err = util.StoreObject(hash, combined)
+	if err != nil {
+		return "", fmt.Errorf("failed to store the file: %w", err)
+	}
+
+	return "", nil
 }
